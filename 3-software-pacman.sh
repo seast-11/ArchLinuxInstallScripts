@@ -18,6 +18,7 @@ PKGS=(
     'zip'                   # Zip compression program
     'sysstat'               # Contains mpstat for CPU utilization
     'stow'                  # .dotfile management
+    'tree'                  # terminal tree viewer
 
     # ZSH Terminal Emulator ----------------------------------------------
 
