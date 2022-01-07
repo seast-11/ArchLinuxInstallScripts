@@ -25,17 +25,27 @@ for PKG in "${PKGS[@]}"; do
     sudo pacman -S "$PKG" --noconfirm --needed
 done
 
-echo -e "\nInstalling DWM\n"
+echo -e "\nInstalling custom seast11 dwm\n"
 
 cd ~ 
-wget https://dl.suckless.org/dwm/dwm-6.2.tar.gz
-tar -xzvf dwm-6.2.tar.gz
-cd dwm-6.2
+mkdir Repos
+cd Repos
+git clone https://github.com/seast-11/dwm.git
+cd dwm
+sudo make clean install
+
+echo -e "\nInstalling custom seast11 dwmblocks\n"
+
+cd ~
+cd Repos
+git clone https://github.com/seast-11/dwm-blocks.git
+cd dwm-blocks
 sudo make clean install
 
 echo -e "\nInstalling St\n"
 
-cd ~ 
+cd ~
+cd Repos
 wget https://dl.suckless.org/st/st-0.8.4.tar.gz
 tar -xzvf st-0.8.4.tar.gz
 cd st-0.8.4
@@ -43,7 +53,8 @@ sudo make clean install
 
 echo -e "\nInstalling Dmenu\n"
 
-cd ~ 
+cd ~
+cd Repos
 wget https://dl.suckless.org/tools/dmenu-5.0.tar.gz
 tar -xzvf dmenu-5.0.tar.gz
 cd dmenu-5.0
