@@ -14,7 +14,7 @@ pacman -S --noconfirm gptfdisk btrfs-progs
 echo "-------------------------------------------------"
 echo "-------select your disk to format----------------"
 echo "-------------------------------------------------"
-lsblk
+lsblk -f
 echo "Please enter disk: (example /dev/sda)"
 read DISK
 echo "--------------------------------------"
@@ -23,11 +23,14 @@ echo "--------------------------------------"
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
+sgdisk -d 3 ${DISK} # format partition
+sgdisk -d 2 ${DISK} # format partition
+sgdisk -d 1 ${DISK} # format partition
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
 sgdisk -n 1:0:+1024M ${DISK} # partition 1 (UEFI SYS), default start block, 1024MB
-sgdisk -n 2:0:+14336M ${DISK} # partition 2 (Root), default start, 14GB
+sgdisk -n 2:0:+32000M ${DISK} # partition 2 (Root), default start, 32GB
 sgdisk -n 3:0:0 ${DISK} # partition 3 (Home), default start, remaining
 
 # set partition types
@@ -43,19 +46,21 @@ sgdisk -c 3:"ARCH-HOME" ${DISK}
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
-mkfs.ext4 -L "ARCH-ROOT" "${DISK}2"
-mkfs.ext4 -L "ARCH-HOME" "${DISK}3"
+mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
+mkfs.ext4 -L "ARCH-ROOT" "${DISK}p2"
+mkfs.ext4 -L "ARCH-HOME" "${DISK}p3"
 
 # mount target
 mkdir /mnt
-mount -t ext4 "${DISK}2" /mnt
+mount -t ext4 "${DISK}p2" /mnt
 mkdir -p /mnt/home
-mount -t ext4 "${DISK}3" /mnt/home/
+mount -t ext4 "${DISK}p3" /mnt/home/
 mkdir -p /mnt/boot/efi
-mount -t vfat "${DISK}1" /mnt/boot
+mount -t vfat "${DISK}p1" /mnt/boot
+mkdir /mnt/home/tmpScripts
 
-lsblk -fa
+lsblk -f
+cp 1-after-arch-chroot.sh /mnt/home/tmpScripts
 
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
