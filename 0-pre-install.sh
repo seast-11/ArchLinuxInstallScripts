@@ -56,8 +56,8 @@ mount -t ext4 "${DISK}p2" /mnt
 mkdir -p /mnt/home
 mount -t ext4 "${DISK}p3" /mnt/home/
 mkdir -p /mnt/boot/efi
-mount -t vfat "${DISK}p1" /mnt/boot
-mkdir /mnt/home/tmpScripts
+mount -t vfat "${DISK}p1" /mnt/boot/efi
+mkdir -p /mnt/home/tmpScripts
 
 lsblk -f
 cp 1-after-arch-chroot.sh /mnt/home/tmpScripts
