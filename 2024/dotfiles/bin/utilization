@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p)  # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p)  # Foreground color
+
+# Get CPU usage using /proc/stat
+cpu_idle_prev=$(awk '/^cpu / {print $5}' /proc/stat)
+cpu_total_prev=$(awk '/^cpu / {sum=0; for (i=2; i<=NF; i++) sum+=$i; print sum}' /proc/stat)
+sleep 1
+cpu_idle_now=$(awk '/^cpu / {print $5}' /proc/stat)
+cpu_total_now=$(awk '/^cpu / {sum=0; for (i=2; i<=NF; i++) sum+=$i; print sum}' /proc/stat)
+
+# Calculate CPU usage percentage
+cpu_idle_diff=$((cpu_idle_now - cpu_idle_prev))
+cpu_total_diff=$((cpu_total_now - cpu_total_prev))
+cpu_usage=$((100 * (cpu_total_diff - cpu_idle_diff) / cpu_total_diff))
+
+# Output CPU usage with pywal colors
+echo "^b$BG_COLOR^^c$FG_COLOR^ CPU: $cpu_usage% ^d^"
+

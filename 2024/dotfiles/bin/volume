@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# Get current volume, mute status, and output volume level
+vol=$(amixer get Master | awk -F'[][]' 'END {print $2}' | tr -d '%')
+muted=$(amixer get Master | grep -c '\[off\]')
+
+# If muted, set volume to 0
+if [ "$muted" -eq 2 ]; then
+  vol=0
+fi
+
+# Determine the appropriate icon based on the volume level
+if [ "$vol" -eq 0 ]; then
+    icon="󰖁"  # Muted icon
+elif [ "$vol" -gt 70 ]; then
+    icon="󰕾"  # Loud icon
+elif [ "$vol" -gt 30 ]; then
+    icon="󰖀"  # Medium icon
+else
+    icon="󰕿"  # Quiet icon
+fi
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p) # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p) # Foreground color
+
+# Output the volume icon with pywal colors and the volume level
+echo "^b$BG_COLOR^^c$FG_COLOR^ $icon $vol% ^d^"
+
+# Handle button click events (e.g., left-click for notification)
+case $BUTTON in
+    1) notify-send "Volume Level" "$vol%" ;;  # Volume notification
+esac

@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p)  # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p)  # Foreground color
+
+# Get the number of available updates
+updates=$(checkupdates | wc -l)
+
+# If there are updates, display the number; otherwise, indicate "Up to date"
+if [ "$updates" -gt 0 ]; then
+    icon="󰏛"  # Icon for updates available
+    message="$updates updates"
+else
+    icon="󰚩"  # Icon for up-to-date
+    message="Up to date"
+fi
+
+# Output the status with pywal colors
+echo "^b$BG_COLOR^^c$FG_COLOR^ $icon $message ^d^"

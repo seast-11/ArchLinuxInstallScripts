@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p)  # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p)  # Foreground color
+
+# Get the size of the Pacman cache
+pacache_size=$(du -sh /var/cache/pacman/pkg | awk '{print $1}')
+
+# Get the percentage of root partition used
+root_usage=$(df -h / | awk 'NR==2 {print $5}')
+
+# Output the status with pywal colors
+echo "^b$BG_COLOR^^c$FG_COLOR^ 󰮯 $pacache_size 󱁕 $root_usage ^d^"

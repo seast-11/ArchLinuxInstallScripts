@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p)  # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p)  # Foreground color
+
+# Check if the Ethernet connection is up (e.g., eth0 or enp3s0)
+interface="enp5s0"  # Replace with your actual interface (e.g., enp3s0, ens33, etc.)
+if ip link show "$interface" | grep -q "state UP"; then
+  # Check if we have internet connectivity by pinging Google DNS
+  if ping -c 1 8.8.8.8 &>/dev/null; then
+    net_icon="󱚻"  # Internet available (check mark)
+  else
+    net_icon="󱚼"  # No internet (warning icon)
+  fi
+else
+  net_icon="󱙝"  # No Ethernet connection (warning icon)
+fi
+
+# Output network status with pywal colors
+echo "^b$BG_COLOR^^c$FG_COLOR^ $net_icon   ^d^"
+

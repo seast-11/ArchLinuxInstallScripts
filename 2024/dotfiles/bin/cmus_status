@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cmus_status=$(cmus-remote -Q 2>/dev/null)
+
+if [[ $? -ne 0 ]]; then
+    # cmus not running
+    echo "" 
+    exit 0
+fi
+
+status=$(echo "$cmus_status" | grep 'status' | awk '{print $2}')
+artist=$(echo "$cmus_status" | grep 'tag artist' | cut -d ' ' -f 3-)
+title=$(echo "$cmus_status" | grep 'tag title' | cut -d ' ' -f 3-)
+
+if [ "$status" == "playing" ]; then
+    echo "   $artist - $title"  
+elif [ "$status" == "paused" ]; then
+    echo "   $artist - $title"  
+else
+    echo "   Silence is golden"  #  = Power icon, for stopped and not playing anything
+fi

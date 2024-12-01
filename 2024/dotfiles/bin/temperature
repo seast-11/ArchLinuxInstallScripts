@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p)  # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p)  # Foreground color
+
+# Get CPU temperature using lm_sensors
+cpu_temp=$(sensors | awk '/^Package id 0:/ {print $4}' | tr -d '+°C')
+
+# Get GPU temperature using nvidia-smi (if NVIDIA GPU available)
+if command -v nvidia-smi > /dev/null 2>&1; then
+  gpu_temp=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits)
+else
+  gpu_temp="N/A"  # Fallback if no NVIDIA GPU
+fi
+
+# Determine icons based on temperatures
+cpu_icon="󰍛"  # Default CPU icon
+gpu_icon="󰢮"  # Default GPU icon
+
+cpu_temp_int=${cpu_temp%.*}
+if [ "$cpu_temp_int" -gt 80 ]; then
+  cpu_icon="󱪀"  # High CPU temp icon
+elif [ "$cpu_temp_int" -gt 60 ]; then
+  cpu_icon="󱩿"  # Medium CPU temp icon
+fi
+
+gpu_temp_int=${cpu_temp%.*}
+if [ "$gpu_temp_int" != "N/A" ] && [ "$gpu_temp" -gt 80 ]; then
+  gpu_icon="󱪀"  # High GPU temp icon
+elif [ "$gpu_temp_int" != "N/A" ] && [ "$gpu_temp" -gt 60 ]; then
+  gpu_icon="󱩿"  # Medium GPU temp icon
+fi
+
+# Output temperatures with pywal colors
+echo "^b$BG_COLOR^^c$FG_COLOR^ $cpu_icon $cpu_temp°C $gpu_icon $gpu_temp°C^d^"
+

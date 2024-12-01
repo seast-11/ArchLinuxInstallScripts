@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Get the current colors from pywal (background and foreground colors)
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p)  # Background color
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p)  # Foreground color
+
+# Get memory usage (used and total memory in MB)
+mem_used=$(free | sed -n '2{p;q}' | awk '{print $3}')  # Used memory in MB
+mem_total=$(free | sed -n '2{p;q}' | awk '{print $2}')  # Total memory in MB
+
+# Convert memory used to GiB (multiplying by 1024 to preserve precision before dividing)
+mem_used_gb=$((mem_used / 1024))  # Used memory in GiB (integer math)
+
+# Convert total memory to GB
+mem_total_gb=$((mem_total / 1024))  # Total memory in GB (integer math)
+
+# Calculate memory usage percentage using integer math
+mem_percent=$((100 * mem_used / mem_total))
+
+# Output the memory usage with pywal colors
+echo "^b$BG_COLOR^^c$FG_COLOR^ MEM: $mem_percent% ($mem_used_gb / $mem_total_gb GB)  ^d^"
+

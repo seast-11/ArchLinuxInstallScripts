@@ -1,0 +1,4 @@
+#!/bin/bash
+BG_COLOR=$(cat ~/.cache/wal/colors | sed -n 1p) # First color is background
+FG_COLOR=$(cat ~/.cache/wal/colors | sed -n 7p) # Seventh color for foreground
+echo "^b$BG_COLOR^^c$FG_COLOR^ $(date '+%b %d (%a) %I:%M%p') ^d^"
