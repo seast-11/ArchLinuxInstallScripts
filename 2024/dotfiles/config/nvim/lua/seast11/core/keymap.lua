@@ -65,3 +65,16 @@ set_keymap("n", "<leader>bd", ":%bd|e#|bd#<CR>", { desc = "close all other buffe
 
 -- make copy/paste work like a human would expect it to!
 set_keymap("v", "p", '"_dP', { desc = "make paste work like it should" })
+
+local color_scheme = { "catppuccin", "solarized-osaka", "gruvbox", "tokyonight", "vscode", "cyberdream" }
+local current_index = 1
+
+function ToggleColorScheme()
+	current_index = current_index % #color_scheme + 1
+	local scheme = color_scheme[current_index]
+	vim.cmd("colorscheme " .. scheme)
+	vim.defer_fn(function()
+		vim.notify("Color scheme switched to: " .. scheme, vim.log.levels.INFO)
+	end, 100) -- delay in ms
+end
+set_keymap("n", "<leader>tc", ":lua ToggleColorScheme()<CR>", { desc = "Toggle colorscheme" })
